@@ -1,16 +1,28 @@
 using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
+using UnityEngine.InputSystem;
 
 public class PlayerControls : MonoBehaviour
 {
     [SerializeField] float moveSpeed;
     float speedX, speedY;
     Rigidbody2D rb;
-
     Vector2 moveDirection;
     Vector2 lastMoveDirection;
 
+
+
+    #region PLAYERINPUT
+    [SerializeField] private InputActionReference movement, pointerPosition;
+
+    #endregion
+
+    private Vector2 pointerInput;
+
+    private WeaponParent weaponParent;
+
+    #region DASH
     [Header("Dash Settings")]
     [SerializeField] float dashSpeed = 10f;
     [SerializeField] float dashDuration = 1f;
@@ -18,24 +30,37 @@ public class PlayerControls : MonoBehaviour
     // int displayStamina = Mathf.RoundToInt(staminaBar);
     bool isDashing;
     bool canDash = true;
-    void Start()
+    #endregion
+
+    private void Awake()
     {
         rb = GetComponent<Rigidbody2D>();
+        weaponParent = GetComponentInChildren<WeaponParent>();
+    }
+
+    void Start()
+    {
+        
         canDash = true;
     }
 
     // Update is called once per frame
     void Update()
     {
+        pointerInput = GetPointerInput();
+        weaponParent.PointerPosition = pointerInput;
+        
         if(isDashing)
         {
             return;
         }
         
-        //Movement
-        speedX = Input.GetAxisRaw("Horizontal") * moveSpeed;
-        speedY = Input.GetAxisRaw("Vertical") * moveSpeed;
-        moveDirection = new Vector2(speedX, speedY).normalized;
+        //Movement (OLD)
+        //speedX = Input.GetAxisRaw("Horizontal") * moveSpeed;
+        //speedY = Input.GetAxisRaw("Vertical") * moveSpeed;
+        moveDirection = movement.action.ReadValue<Vector2>();
+
+
 
         if (moveDirection != Vector2.zero)
         {
@@ -58,6 +83,12 @@ public class PlayerControls : MonoBehaviour
         #endregion
     }
 
+    private Vector2 GetPointerInput()
+    {
+        Vector3 mousePos = pointerPosition.action.ReadValue<Vector2>();
+        mousePos.z = Camera.main.nearClipPlane;
+        return Camera.main.ScreenToWorldPoint(mousePos);
+    }
     private void FixedUpdate()
     {
         if (isDashing)
