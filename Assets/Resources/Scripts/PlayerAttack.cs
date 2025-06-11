@@ -5,16 +5,15 @@ using UnityEngine.InputSystem;
 
 public class PlayerAttack : MonoBehaviour
 {
-    private float timeBetweenAttack;
-    public float startTimeBetweenAttack;
+    public MeleeAttack meleeAttack;
     [SerializeField] private InputActionReference attack;
 
-    public Transform attackPos;
-    public float attackRange;
-    public LayerMask whatIsEnemies;
-    public int damage;
+    //public Transform attackPos;
+    //public float attackRange;
+    //public LayerMask whatIsEnemies;
+    //public int damage;
 
-    private bool canAttack = true;
+    // private bool canAttack = true;
 
     private void OnEnable()
     {
@@ -28,39 +27,28 @@ public class PlayerAttack : MonoBehaviour
         attack.action.Disable();
     }
 
-    private void Update()
-    {
-        if (!canAttack)
-        {
-            timeBetweenAttack -= Time.deltaTime;
-            if (timeBetweenAttack <= 0f)
-            {
-                canAttack = true;
-            }
-        }
-    }
+    
 
     private void PerformAttack(InputAction.CallbackContext context)
     {
-        if (!canAttack)
-            return;
+        /*  if (!canAttack)
+              return;
 
-        // Attack logic
-        Collider2D[] enemiesToDamage = Physics2D.OverlapCircleAll(attackPos.position, attackRange, whatIsEnemies);
-        for (int i = 0; i < enemiesToDamage.Length; i++)
-        {
-            enemiesToDamage[i].GetComponent<EnemyStats>()?.TakeDamage(damage);
-            Debug.Log("Enemy took damage " + i);
-        }
+          // Attack logic
+          Collider2D[] enemiesToDamage = Physics2D.OverlapCircleAll(attackPos.position, attackRange, whatIsEnemies);
+          for (int i = 0; i < enemiesToDamage.Length; i++)
+          {
+              enemiesToDamage[i].GetComponent<EnemyStats>()?.TakeDamage(damage);
+              Debug.Log("Enemy took damage " + i);
+          }
 
-        // Reset attack cooldown
-        canAttack = false;
-        timeBetweenAttack = startTimeBetweenAttack;
+          // Reset attack cooldown
+          canAttack = false;
+          timeBetweenAttack = startTimeBetweenAttack;
+        */
+
+        meleeAttack.TriggerAttack();
     }
 
-    private void OnDrawGizmosSelected()
-    {
-        Gizmos.color = Color.red;
-        Gizmos.DrawWireSphere(attackPos.position, attackRange);
-    }
+    
 }

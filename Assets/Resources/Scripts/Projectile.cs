@@ -8,6 +8,7 @@ public class Projectile : MonoBehaviour
     [Header("Projectile Properties")]
     public float speed;
     [SerializeField] private bool isHoming;
+    [SerializeField] private int damage;
 
     private Transform player;
     private Vector2 target;
@@ -24,6 +25,9 @@ public class Projectile : MonoBehaviour
 
     private void Update()
     {
+        if (player == null)
+            return;
+        
         if (isHoming)
         {
             transform.position = Vector2.MoveTowards(transform.position, player.position, speed * Time.deltaTime);
@@ -53,6 +57,7 @@ public class Projectile : MonoBehaviour
             if (other.CompareTag("Player"))
             {
                 DestroyProjectile();
+            player.GetComponent<IAttackable>().TakeDamage(damage);
                 Debug.Log("Projectile hit Player");
             }
     }
